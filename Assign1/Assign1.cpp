@@ -123,10 +123,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-//int state;
+//int static state = 1;
+//int static state2 = 3;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    int static state = 1;
+    static int state = 1;
+    static int state2 = 3;
+    static bool bTimer = false;
+
+
     switch (message)
     {
     case WM_COMMAND:
@@ -148,11 +153,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_LBUTTONDOWN:
     {
-        if (state >= 4)
-            state = 1;
+        if (!bTimer)
+            SetTimer(hWnd, 0, 1500, 0);
         else
+            KillTimer(hWnd, 0);
+        bTimer = !bTimer;
+      /*  state += 1;
+        state2 += 1;
+        if (state > 4) 
+        {
+            state = 1;
+        }
+        if (state2 > 4)
+        {
+            state2 = 1;
+        }*/
+       /* else {
             state = state + 1;
-        InvalidateRect(hWnd, 0, true);
+            state2 = state2 + 1;
+        }*/
+        //InvalidateRect(hWnd, 0, true);
         break;
     }
     case WM_PAINT:
@@ -160,6 +180,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             trafficLights(hdc, 100, 100,state);
+            trafficLights(hdc, 600, 300, state2);
+            drawRoad(hdc);
+            
             //// TODO: Add any drawing code that uses hdc here...
             //HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
             //HGDIOBJ hOrg = SelectObject(hdc, hBrush);
@@ -190,12 +213,23 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
             /*SelectObject(hdc, hOrg);
             DeleteObject(hBrush);*/
+
             
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_TIMER:
-
+        state += 1;
+        state2 += 1;
+        if (state > 4)
+        {
+            state = 1;
+        }
+        if (state2 > 4)
+        {
+            state2 = 1;
+        }
+        InvalidateRect(hWnd, 0, true);
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
