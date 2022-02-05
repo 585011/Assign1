@@ -122,8 +122,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - post a quit message and return
 //
 //
+
+//int state;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    int static state = 1;
     switch (message)
     {
     case WM_COMMAND:
@@ -143,11 +146,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_LBUTTONDOWN:
+    {
+        if (state >= 4)
+            state = 1;
+        else
+            state = state + 1;
+        InvalidateRect(hWnd, 0, true);
+        break;
+    }
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            trafficLights(hdc, 100, 100,1);
+            trafficLights(hdc, 100, 100,state);
             //// TODO: Add any drawing code that uses hdc here...
             //HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
             //HGDIOBJ hOrg = SelectObject(hdc, hBrush);
@@ -176,11 +188,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             //hOrg = SelectObject(hdc, hBrush);
             //Ellipse(hdc, 110, 255, 180, 325);
 
-            //SelectObject(hdc, hOrg);
-            //DeleteObject(hBrush);
+            /*SelectObject(hdc, hOrg);
+            DeleteObject(hBrush);*/
             
             EndPaint(hWnd, &ps);
         }
+        break;
+    case WM_TIMER:
+
         break;
     case WM_DESTROY:
         PostQuitMessage(0);

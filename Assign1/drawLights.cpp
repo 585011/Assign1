@@ -43,8 +43,31 @@ void trafficLights(HDC hdc, int left, int top, int state) {
 
 	rectangleHelp(hdc, left, top, (left + 90), (top + 230), black);
 
+	switch (state) {
+	case 1: 
 		ellipseHelp(hdc, (left + 10), redTop, right, redBot, red);
-		ellipseHelp(hdc,(left+10), yellowTop, right,yellowBot, yellow);
-		ellipseHelp(hdc, (left+10), greenTop, right, greenBot, green);
+		ellipseHelp(hdc, (left + 10), yellowTop, right, yellowBot, gray);
+		ellipseHelp(hdc, (left + 10), greenTop, right, greenBot, gray);
+		break;
+	case 2:
+		ellipseHelp(hdc, (left + 10), redTop, right, redBot, red);
+		ellipseHelp(hdc, (left + 10), yellowTop, right, yellowBot, yellow);
+		ellipseHelp(hdc, (left + 10), greenTop, right, greenBot, gray);
+		break;
+	case 3:
+		ellipseHelp(hdc, (left + 10), redTop, right, redBot, gray);
+		ellipseHelp(hdc, (left + 10), yellowTop, right, yellowBot, gray);
+		ellipseHelp(hdc, (left + 10), greenTop, right, greenBot, green);
+		break;
+	case 4:
+		ellipseHelp(hdc, (left + 10), redTop, right, redBot, gray);
+		ellipseHelp(hdc, (left + 10), yellowTop, right, yellowBot, yellow);
+		ellipseHelp(hdc, (left + 10), greenTop, right, greenBot, gray);
+		break;
+	}
+
+	/*	ellipseHelp(hdc, (left + 10), redTop, right, redBot, red);
+		ellipseHelp(hdc,(left+10), yellowTop, right,yellowBot, gray);
+		ellipseHelp(hdc, (left+10), greenTop, right, greenBot, gray);*/
 }
 
