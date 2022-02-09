@@ -30,12 +30,21 @@
     <ClInclude Include="drawLights.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Car.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assign1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="drawLights.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Car.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CarL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

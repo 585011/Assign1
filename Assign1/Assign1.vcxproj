@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assign1.h" />
+    <ClInclude Include="Car.h" />
     <ClInclude Include="drawLights.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -147,6 +148,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assign1.cpp" />
+    <ClCompile Include="Car.cpp" />
+    <ClCompile Include="CarL.cpp" />
     <ClCompile Include="drawLights.cpp" />
   </ItemGroup>
   <ItemGroup>

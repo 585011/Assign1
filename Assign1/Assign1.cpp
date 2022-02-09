@@ -1,9 +1,74 @@
+//#include "Car.cpp"
 // Assign1.cpp : Defines the entry point for the application.
 //
 
 #include "framework.h"
 #include "Assign1.h"
 #include "drawLights.h"
+#include "Car.h"
+class Car
+{
+public:
+    int n;
+    int x, y;
+    Car(int _n, int _x, int _y) : n(_n), x(_x), y(_y)
+    {
+    }
+    void Draw(HDC hdc)
+    {
+        //HBRUSH hBrush = CreateSolidBrush(RGB(255,0,0));
+        //HGDIOBJ hOrg = SelectObject(hdc, hBrush);
+        Rectangle(hdc, x, y - 5, x + 5, y);
+
+        //SelectObject(hdc, hOrg);
+        //DeleteObject(hBrush);
+    }
+};
+
+class CarList
+{
+public:
+    Car* c[100];
+    int i;
+    CarList()
+    {
+        i = 0;
+    }
+    void push(Car* aCar)
+    {
+        c[i++] = aCar;
+    }
+    void Draw(HDC hdc)
+    {
+        for (int j = 0; j < i; j++)
+            c[j]->Draw(hdc);
+    }
+    // Bruker denne for både x og y
+    void MoveX(int dx)
+    {
+        for (int j = 0; j < i; j++)
+            c[j]->x += dx;
+    }
+    void MoveY(int dy)
+    {
+        for (int j = 0; j < i; j++)
+            c[j]->y += dy;
+    }
+    void Clear()
+    {
+        for (int j = 0; j < i; j++)
+            delete c[j];
+        i = 0;
+    }
+};
+
+//void drawNorth() 
+//{
+//    for(int i = 0; i < )
+//}
+
+static CarList carListW;
+static CarList carListN;
 
 #define MAX_LOADSTRING 100
 
@@ -123,13 +188,14 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 //
 
-//int static state = 1;
-//int static state2 = 3;
+int pw;
+int pn;
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static int state = 1;
     static int state2 = 3;
     static bool bTimer = false;
+    static int n = 0;
 
 
     switch (message)
@@ -151,6 +217,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_RBUTTONDOWN:
+    {
+        //Car* car = new Car(n++, 200, 285);
+        int rnd1 = rand() % 10;
+        carListW.push(new Car(n++, 200, rnd1 + 280));
+        InvalidateRect(hWnd, 0, true);
+    }
+        break;
     case WM_LBUTTONDOWN:
     {
         if (!bTimer)
@@ -158,21 +232,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else
             KillTimer(hWnd, 0);
         bTimer = !bTimer;
-      /*  state += 1;
-        state2 += 1;
-        if (state > 4) 
-        {
-            state = 1;
-        }
-        if (state2 > 4)
-        {
-            state2 = 1;
-        }*/
-       /* else {
-            state = state + 1;
-            state2 = state2 + 1;
-        }*/
-        //InvalidateRect(hWnd, 0, true);
         break;
     }
     case WM_PAINT:
@@ -182,6 +241,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             trafficLights(hdc, 100, 100,state);
             trafficLights(hdc, 600, 300, state2);
             drawRoad(hdc);
+            HBRUSH hb = CreateSolidBrush(RGB(255, 0, 0));
+            HGDIOBJ hOrg = SelectObject(hdc, hb);
+            carListW.Draw(hdc);
+            carListN.Draw(hdc);
+            
+            SelectObject(hdc, hOrg);
+            DeleteObject(hb);
             
             //// TODO: Add any drawing code that uses hdc here...
             //HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
@@ -219,8 +285,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_TIMER:
+        //int rnd = rand() % 100; // 0-99
+        //carListW.MoveX(30);
+        //carListN.MoveY(30);
         state += 1;
         state2 += 1;
+
         if (state > 4)
         {
             state = 1;
@@ -229,9 +299,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             state2 = 1;
         }
+        if (state != 4)
+        {
+            carListW.MoveX(0);
+        }
+        else if (state == 4) {
+            carListW.MoveX(30);
+        }
         InvalidateRect(hWnd, 0, true);
         break;
+    case WM_KEYDOWN:
+        switch (wParam)
+        {
+            case VK_LEFT:
+                pw -= 10;
+                break;
+            case VK_RIGHT:
+                pw += 10;
+                break;
+            case VK_DOWN:
+                pn -= 10;
+                break;
+            case VK_UP:
+                pn += 10;
+                break;
+        }
+    break;
     case WM_DESTROY:
+        KillTimer(hWnd, 0);
         PostQuitMessage(0);
         break;
     default:
