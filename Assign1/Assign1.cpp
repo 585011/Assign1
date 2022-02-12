@@ -23,6 +23,9 @@ public:
         //SelectObject(hdc, hOrg);
         //DeleteObject(hBrush);
     }
+    int getXCord() {
+        return x;
+    }
 };
 
 class CarList
@@ -60,12 +63,59 @@ public:
             delete c[j];
         i = 0;
     }
+    int getXCord() 
+    {
+        for (int j = 0; j < i; j++) {
+            return c[j]->x;
+        }
+    }
+    int getYCord()
+    {
+        for (int j = 0; j < i; j++)
+        {
+            return c[j]->y;
+        }
+    }
+
+    // Method for removing cars that are at the end of the road (X-coordinate)
+    void removeCW()
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if (c[j]->x >= 700)
+            {
+                c[i--];
+            }
+        }
+    }
+
+    // Method for removing cars that are at the end of the road (Y-coordinate)
+    void removeCN()
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if (c[j]->y >= 500)
+            {
+                c[i--];
+            }
+        }
+    }
+    void checkCollision() 
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if ((c[j]->x >= 440 && c[j]->x <= 460))
+            {
+                c[j]->x += 30;
+            }
+            else if ((c[j]->y >= 270 && c[j]->y <= 290))
+            {
+                c[j]->y += 30;
+            }
+        }
+    }
 };
 
-//void drawNorth() 
-//{
-//    for(int i = 0; i < )
-//}
 
 static CarList carListW;
 static CarList carListN;
@@ -82,6 +132,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+INT_PTR CALLBACK    MyDlg(HWND, UINT, WPARAM, LPARAM);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -190,12 +241,17 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 int pw;
 int pn;
+WCHAR strbuff[100];
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static int state = 1;
     static int state2 = 3;
     static bool bTimer = false;
     static int n = 0;
+    static int n2 = 0;
+    //int rnd1 = rand() % 10;
+    //int rndW = rand() % 100; // 0-99
+    //int rndN = rand() % 100;
 
 
     switch (message)
@@ -220,9 +276,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_RBUTTONDOWN:
     {
         //Car* car = new Car(n++, 200, 285);
-        int rnd1 = rand() % 10;
-        carListW.push(new Car(n++, 200, rnd1 + 280));
-        InvalidateRect(hWnd, 0, true);
+        //carListW.push(new Car(n++, 200, (rand()%10) + 280));
+        DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, MyDlg);
+        //InvalidateRect(hWnd, 0, true);
     }
         break;
     case WM_LBUTTONDOWN:
@@ -238,8 +294,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            trafficLights(hdc, 100, 100,state);
-            trafficLights(hdc, 600, 300, state2);
+            trafficLights(hdc, 300, 300,state);
+            trafficLights(hdc, 500, 100, state2);
             drawRoad(hdc);
             HBRUSH hb = CreateSolidBrush(RGB(255, 0, 0));
             HGDIOBJ hOrg = SelectObject(hdc, hb);
@@ -248,49 +304,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             
             SelectObject(hdc, hOrg);
             DeleteObject(hb);
-            
-            //// TODO: Add any drawing code that uses hdc here...
-            //HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 0));
-            //HGDIOBJ hOrg = SelectObject(hdc, hBrush);
-            //Rectangle(hdc, 100, 100, 190, 330);
-
-            //SelectObject(hdc, hOrg);
-            //DeleteObject(hBrush);
-
-            //hBrush = CreateSolidBrush(RGB(255, 0, 0));
-            //hOrg = SelectObject(hdc, hBrush);
-            //Ellipse(hdc, 110, 105, 180, 170);
-
-            //SelectObject(hdc, hOrg);
-            //DeleteObject(hBrush);
-
-            //// (hdc, right, top, left, bottom) --> right samme, top = forrige top + 10, left samme
-            //// bottom = top + 65
-            //hBrush = CreateSolidBrush(RGB(255, 255, 0));
-            //hOrg = SelectObject(hdc, hBrush);
-            //Ellipse(hdc, 110, 180, 180, 245);
-
-            //SelectObject(hdc, hOrg);
-            //DeleteObject(hBrush);
-
-            //hBrush = CreateSolidBrush(RGB(128, 128, 128));
-            //hOrg = SelectObject(hdc, hBrush);
-            //Ellipse(hdc, 110, 255, 180, 325);
-
-            /*SelectObject(hdc, hOrg);
-            DeleteObject(hBrush);*/
 
             
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_TIMER:
-        //int rnd = rand() % 100; // 0-99
+    {
         //carListW.MoveX(30);
         //carListN.MoveY(30);
+        int rnd = rand() % 100;
         state += 1;
         state2 += 1;
-
+        //carListN.checkCollision();
+        //carListW.checkCollision();
+        // Makes it so that another trafficlight cant be green when another is.
         if (state > 4)
         {
             state = 1;
@@ -299,6 +327,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             state2 = 1;
         }
+
+        // Makes it so that if trafficlight is red, a car cant move. And move if it is green.
         if (state != 4)
         {
             carListW.MoveX(0);
@@ -306,7 +336,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         else if (state == 4) {
             carListW.MoveX(30);
         }
+        if (state2 != 4)
+        {
+            carListN.MoveY(0);
+        }
+        else if (state2 == 4)
+        {
+            carListN.MoveY(40);
+        }
+
+        // Uses pw and pn to spawn cars.
+        if (rnd < pw)
+        {
+            carListW.push(new Car(n++, 200, (rand() % 10) + 280));
+        }
+        if (rnd < pn)
+        {
+            carListN.push(new Car(n2++, (rand() % 10) + 440, 100));
+        }
+
+        // Removes cars that are at the end of the road.
+
+        carListN.removeCN();
+        carListW.removeCW();
         InvalidateRect(hWnd, 0, true);
+    }
         break;
     case WM_KEYDOWN:
         switch (wParam)
@@ -346,6 +400,50 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+        {
+            EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        break;
+    }
+    return (INT_PTR)FALSE;
+}
+
+INT_PTR CALLBACK MyDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+        static HWND statt;
+    case WM_INITDIALOG:
+    {
+        SetWindowTextA(hDlg, "pw");
+        SetWindowTextA(hDlg, "pn");
+        statt = GetDlgItem(hDlg, IDC_PWVAL);
+        return (INT_PTR)TRUE;
+    }
+    break;
+
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK) {
+            WCHAR pwV[10];
+            WCHAR pnV[10];
+            //int pwvalue = GetDlgItemText(hDlg, IDC_PWVAL, strbuff, 100);
+            //SetWindowTextA(hDlg, "pw");
+            //SetWindowTextA(hDlg, "pn");
+            GetDlgItemText(hDlg, IDC_PWVAL, pwV, 10);
+            GetDlgItemText(hDlg, IDC_PNVAL, pnV, 10);
+            //EndDialog(hDlg, LOWORD(wParam));
+
+            //GetWindowText(hDlg, pwV, 10);
+            //GetWindowText(hDlg, pnV, 10);
+
+
+            pw = (int)pwV;
+            pn = (int)pnV;
+            ////EndDialog(hDlg, LOWORD(wParam));
+            return (INT_PTR)TRUE;
+        }
+        if (LOWORD(wParam) == IDCANCEL)
         {
             EndDialog(hDlg, LOWORD(wParam));
             return (INT_PTR)TRUE;

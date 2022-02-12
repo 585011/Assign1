@@ -38,6 +38,7 @@ void drawRoad(HDC hdc) {
 	Rectangle(hdc, 450, 100, 460, 500);
 	Rectangle(hdc, 440, 100, 450, 500);
 
+	// Square in the middle
 	Rectangle(hdc, 440, 270, 460, 290);
 
 	SelectObject(hdc, hOrg);
