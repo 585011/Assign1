@@ -119,6 +119,8 @@ public:
 
 static CarList carListW;
 static CarList carListN;
+WCHAR pwV[10];
+WCHAR pnV[10];
 
 #define MAX_LOADSTRING 100
 
@@ -284,7 +286,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_LBUTTONDOWN:
     {
         if (!bTimer)
-            SetTimer(hWnd, 0, 1500, 0);
+            SetTimer(hWnd, 0, 1000, 0);
         else
             KillTimer(hWnd, 0);
         bTimer = !bTimer;
@@ -413,35 +415,26 @@ INT_PTR CALLBACK MyDlg(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
-        static HWND statt;
     case WM_INITDIALOG:
     {
-        SetWindowTextA(hDlg, "pw");
-        SetWindowTextA(hDlg, "pn");
-        statt = GetDlgItem(hDlg, IDC_PWVAL);
         return (INT_PTR)TRUE;
     }
     break;
 
     case WM_COMMAND:
         if (LOWORD(wParam) == IDOK) {
-            WCHAR pwV[10];
-            WCHAR pnV[10];
+            /*WCHAR pwV[10];
+            WCHAR pnV[10];*/
             //int pwvalue = GetDlgItemText(hDlg, IDC_PWVAL, strbuff, 100);
-            //SetWindowTextA(hDlg, "pw");
-            //SetWindowTextA(hDlg, "pn");
+
             GetDlgItemText(hDlg, IDC_PWVAL, pwV, 10);
             GetDlgItemText(hDlg, IDC_PNVAL, pnV, 10);
-            //EndDialog(hDlg, LOWORD(wParam));
 
-            //GetWindowText(hDlg, pwV, 10);
-            //GetWindowText(hDlg, pnV, 10);
+            BOOL isNumb = true;
+            pw = GetDlgItemInt(hDlg, IDC_PWVAL, &isNumb, true);
+            pn = GetDlgItemInt(hDlg, IDC_PNVAL, &isNumb, true);
 
 
-            pw = (int)pwV;
-            pn = (int)pnV;
-            ////EndDialog(hDlg, LOWORD(wParam));
-            return (INT_PTR)TRUE;
         }
         if (LOWORD(wParam) == IDCANCEL)
         {
