@@ -23,9 +23,6 @@ public:
         //SelectObject(hdc, hOrg);
         //DeleteObject(hBrush);
     }
-    int getXCord() {
-        return x;
-    }
 };
 
 class CarList
@@ -100,7 +97,9 @@ public:
             }
         }
     }
-    void checkCollision() 
+
+    // Method for checking the x-value for cars coming from the west road, moves the car +30 pixles if it is in the intervall
+    void checkCollisionX() 
     {
         for (int j = 0; j < i; j++)
         {
@@ -108,7 +107,15 @@ public:
             {
                 c[j]->x += 30;
             }
-            else if ((c[j]->y >= 270 && c[j]->y <= 290))
+        }
+    }
+
+    // Method for checking the y-value for cars coming from the north road, moves the car +30 pixles if it is in the intervall
+    void checkCollisionY() 
+    {
+        for (int j = 0; j < i; j++)
+        {
+            if ((c[j]->y >= 270 && c[j]->y <= 290))
             {
                 c[j]->y += 30;
             }
@@ -251,9 +258,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static bool bTimer = false;
     static int n = 0;
     static int n2 = 0;
-    //int rnd1 = rand() % 10;
-    //int rndW = rand() % 100; // 0-99
-    //int rndN = rand() % 100;
 
 
     switch (message)
@@ -344,7 +348,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         else if (state2 == 4)
         {
-            carListN.MoveY(40);
+            carListN.MoveY(30);
         }
 
         // Uses pw and pn to spawn cars.
@@ -357,8 +361,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             carListN.push(new Car(n2++, (rand() % 10) + 440, 100));
         }
 
-        // Removes cars that are at the end of the road.
+        // Checks if cars coming from both north and west are in the middle whenever lightstate changes, moves if they are.
+        carListN.checkCollisionY();
+        carListW.checkCollisionX();
 
+        // Removes cars that are at the end of the road.
         carListN.removeCN();
         carListW.removeCW();
         InvalidateRect(hWnd, 0, true);
